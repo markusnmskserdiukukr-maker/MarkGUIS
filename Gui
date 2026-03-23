@@ -98,7 +98,7 @@ layout1.HorizontalAlignment = Enum.HorizontalAlignment.Center
 local layout2 = Instance.new("UIListLayout", FlyFrame)
 layout2.Padding = UDim.new(0,6)
 layout2.HorizontalAlignment = Enum.HorizontalAlignment.Center
-function updateHeight()
+-- function updateHeight()
     local activeFrame = SettingsFrame.Visible and SettingsFrame or FlyFrame
     local layout = activeFrame:FindFirstChildOfClass("UIListLayout")
 
@@ -130,9 +130,9 @@ end
 local WalkBox = createInput(SettingsFrame, "WalkSpeed")
 local JumpBox = createInput(SettingsFrame, "JumpHeight")
 local HpBox   = createInput(SettingsFrame, "Health")
-WalkBox.FocusLost:Connect(updateHeight)
-JumpBox.FocusLost:Connect(updateHeight)
-HpBox.FocusLost:Connect(updateHeight)
+-- WalkBox.FocusLost:Connect(updateHeight)
+-- JumpBox.FocusLost:Connect(updateHeight)
+-- HpBox.FocusLost:Connect(updateHeight)
 
 -- Apply
 local ApplyBtn = Instance.new("TextButton", SettingsFrame)
