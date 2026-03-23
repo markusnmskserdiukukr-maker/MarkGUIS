@@ -8,190 +8,167 @@ ScreenGui.Name = "MarkGui"
 
 -- Main Frame
 local Frame = Instance.new("Frame", ScreenGui)
-Frame.Size = UDim2.new(0, 300, 0, 360)
-Frame.Position = UDim2.new(0.5, -150, 0.5, -180)
+Frame.Size = UDim2.new(0, 320, 0, 380)
+Frame.Position = UDim2.new(0.5, -160, 0.5, -190)
 Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Frame.BorderSizePixel = 0
-
 Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 14)
-
-local Stroke = Instance.new("UIStroke", Frame)
-Stroke.Color = Color3.fromRGB(80, 80, 80)
-Stroke.Thickness = 1
 
 -- TopBar
 local TopBar = Instance.new("Frame", Frame)
 TopBar.Size = UDim2.new(1, 0, 0, 35)
-TopBar.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
-TopBar.BorderSizePixel = 0
+TopBar.BackgroundColor3 = Color3.fromRGB(18,18,18)
 
 Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 14)
 
+-- Title
 local Title = Instance.new("TextLabel", TopBar)
 Title.Size = UDim2.new(1, -50, 1, 0)
-Title.Position = UDim2.new(0, 12, 0, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
 Title.Text = "MarkGui"
-Title.TextColor3 = Color3.fromRGB(255,255,255)
+Title.TextColor3 = Color3.new(1,1,1)
 Title.BackgroundTransparency = 1
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 16
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- Close button
+-- Close
 local CloseButton = Instance.new("TextButton", TopBar)
 CloseButton.Size = UDim2.new(0, 28, 0, 28)
 CloseButton.Position = UDim2.new(1, -32, 0.5, -14)
 CloseButton.Text = "X"
-CloseButton.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200,60,60)
 CloseButton.TextColor3 = Color3.new(1,1,1)
-CloseButton.Font = Enum.Font.GothamBold
-CloseButton.TextSize = 14
 
-Instance.new("UICorner", CloseButton).CornerRadius = UDim.new(0, 6)
+Instance.new("UICorner", CloseButton).CornerRadius = UDim.new(0,6)
 
 CloseButton.MouseButton1Click:Connect(function()
     Frame.Visible = false
 end)
 
--- Input creator
-local function createInput(yPos, placeholder)
-    local box = Instance.new("TextBox", Frame)
-    box.Size = UDim2.new(0, 260, 0, 32)
-    box.Position = UDim2.new(0.5, -130, 0, yPos)
-    box.PlaceholderText = placeholder
-    box.Text = ""
-    box.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    box.TextColor3 = Color3.fromRGB(255,255,255)
-    box.Font = Enum.Font.Gotham
-    box.TextSize = 14
-    box.ClearTextOnFocus = false
+-- Tabs buttons
+local TabsFrame = Instance.new("Frame", Frame)
+TabsFrame.Size = UDim2.new(1, 0, 0, 40)
+TabsFrame.Position = UDim2.new(0,0,0,35)
+TabsFrame.BackgroundTransparency = 1
 
-    Instance.new("UICorner", box).CornerRadius = UDim.new(0, 8)
-
-    local stroke = Instance.new("UIStroke", box)
-    stroke.Color = Color3.fromRGB(70,70,70)
-
-    return box
-end
-
--- Inputs
-local WalkBox = createInput(55, "WalkSpeed")
-local JumpBox = createInput(95, "JumpHeight")
-local HpBox   = createInput(135, "Set Health")
-local SpeedBox = createInput(175, "Fly Speed")
-
--- Button creator
-local function createButton(text, yPos)
-    local btn = Instance.new("TextButton", Frame)
-    btn.Size = UDim2.new(0, 260, 0, 38)
-    btn.Position = UDim2.new(0.5, -130, 0, yPos)
+local function createTabButton(text, x)
+    local btn = Instance.new("TextButton", TabsFrame)
+    btn.Size = UDim2.new(0.5, -5, 1, 0)
+    btn.Position = UDim2.new(x, 0, 0, 0)
     btn.Text = text
-    btn.BackgroundColor3 = Color3.fromRGB(70, 130, 255)
-    btn.TextColor3 = Color3.fromRGB(255,255,255)
+    btn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+    btn.TextColor3 = Color3.new(1,1,1)
     btn.Font = Enum.Font.GothamBold
-    btn.TextSize = 15
-
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
-
-    local stroke = Instance.new("UIStroke", btn)
-    stroke.Color = Color3.fromRGB(90,90,90)
-
-    btn.MouseEnter:Connect(function()
-        btn.BackgroundColor3 = Color3.fromRGB(90, 150, 255)
-    end)
-
-    btn.MouseLeave:Connect(function()
-        btn.BackgroundColor3 = Color3.fromRGB(70, 130, 255)
-    end)
-
+    btn.TextSize = 14
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0,8)
     return btn
 end
 
--- Buttons
-local ApplyButton = createButton("Apply", 220)
-local FlyButton = createButton("Fly OFF", 265)
+local SettingsTabBtn = createTabButton("Settings", 0)
+local FlyTabBtn = createTabButton("Fly", 0.5)
 
--- Apply logic
-ApplyButton.MouseButton1Click:Connect(function()
+-- Content frames
+local SettingsFrame = Instance.new("Frame", Frame)
+SettingsFrame.Size = UDim2.new(1,0,1,-80)
+SettingsFrame.Position = UDim2.new(0,0,0,75)
+SettingsFrame.BackgroundTransparency = 1
+
+local FlyFrame = Instance.new("Frame", Frame)
+FlyFrame.Size = UDim2.new(1,0,1,-80)
+FlyFrame.Position = UDim2.new(0,0,0,75)
+FlyFrame.BackgroundTransparency = 1
+FlyFrame.Visible = false
+
+-- Input creator
+local function createInput(parent, y, placeholder)
+    local box = Instance.new("TextBox", parent)
+    box.Size = UDim2.new(0, 260, 0, 32)
+    box.Position = UDim2.new(0.5, -130, 0, y)
+    box.PlaceholderText = placeholder
+    box.BackgroundColor3 = Color3.fromRGB(40,40,40)
+    box.TextColor3 = Color3.new(1,1,1)
+    box.ClearTextOnFocus = false
+    Instance.new("UICorner", box).CornerRadius = UDim.new(0,8)
+    return box
+end
+
+-- SETTINGS TAB
+local WalkBox = createInput(SettingsFrame, 10, "WalkSpeed")
+local JumpBox = createInput(SettingsFrame, 60, "JumpHeight")
+local HpBox   = createInput(SettingsFrame, 110, "Health")
+
+local ApplyBtn = Instance.new("TextButton", SettingsFrame)
+ApplyBtn.Size = UDim2.new(0,260,0,40)
+ApplyBtn.Position = UDim2.new(0.5,-130,0,160)
+ApplyBtn.Text = "Apply"
+ApplyBtn.BackgroundColor3 = Color3.fromRGB(70,130,255)
+ApplyBtn.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", ApplyBtn)
+
+ApplyBtn.MouseButton1Click:Connect(function()
     local char = player.Character
     if not char then return end
-    
-    local humanoid = char:FindFirstChildOfClass("Humanoid")
-    if not humanoid then return end
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hum then return end
 
     local walk = tonumber(WalkBox.Text)
     local jump = tonumber(JumpBox.Text)
-    local hp   = tonumber(HpBox.Text)
+    local hp = tonumber(HpBox.Text)
 
-    if walk then
-        humanoid.WalkSpeed = walk
-    end
-
+    if walk then hum.WalkSpeed = walk end
     if jump then
-        humanoid.UseJumpPower = false
-        humanoid.JumpHeight = jump
+        hum.UseJumpPower = false
+        hum.JumpHeight = jump
     end
-
     if hp then
-        humanoid.MaxHealth = hp
-        humanoid.Health = hp
+        hum.MaxHealth = hp
+        hum.Health = hp
     end
 end)
 
--- Fly system
+-- FLY TAB
+local SpeedBox = createInput(FlyFrame, 10, "Fly Speed")
+
+local FlyButton = Instance.new("TextButton", FlyFrame)
+FlyButton.Size = UDim2.new(0,260,0,40)
+FlyButton.Position = UDim2.new(0.5,-130,0,60)
+FlyButton.Text = "Fly OFF"
+FlyButton.BackgroundColor3 = Color3.fromRGB(70,130,255)
+FlyButton.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", FlyButton)
+
+-- Fly logic
 local flying = false
 local bodyVelocity
 local flySpeed = 50
-local flyConnection
+local flyConn
 
 local function startFly()
     local char = player.Character
     if not char then return end
-    
     local hrp = char:FindFirstChild("HumanoidRootPart")
     if not hrp then return end
 
     bodyVelocity = Instance.new("BodyVelocity")
-    bodyVelocity.MaxForce = Vector3.new(1e9, 1e9, 1e9)
-    bodyVelocity.Velocity = Vector3.new(0,0,0)
+    bodyVelocity.MaxForce = Vector3.new(1e9,1e9,1e9)
     bodyVelocity.Parent = hrp
 
     flying = true
 
-    flyConnection = RunService.RenderStepped:Connect(function()
+    flyConn = RunService.RenderStepped:Connect(function()
         if not flying then return end
 
         local cam = workspace.CurrentCamera
         local move = Vector3.new(0,0,0)
-
         local moving = false
 
-        if UIS:IsKeyDown(Enum.KeyCode.W) then
-            move += cam.CFrame.LookVector
-            moving = true
-        end
-        if UIS:IsKeyDown(Enum.KeyCode.S) then
-            move -= cam.CFrame.LookVector
-            moving = true
-        end
-        if UIS:IsKeyDown(Enum.KeyCode.A) then
-            move -= cam.CFrame.RightVector
-            moving = true
-        end
-        if UIS:IsKeyDown(Enum.KeyCode.D) then
-            move += cam.CFrame.RightVector
-            moving = true
-        end
-
-        if UIS:IsKeyDown(Enum.KeyCode.Space) then
-            move += Vector3.new(0,1,0)
-            moving = true
-        end
-
-        if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then
-            move -= Vector3.new(0,1,0)
-            moving = true
-        end
+        if UIS:IsKeyDown(Enum.KeyCode.W) then move += cam.CFrame.LookVector moving = true end
+        if UIS:IsKeyDown(Enum.KeyCode.S) then move -= cam.CFrame.LookVector moving = true end
+        if UIS:IsKeyDown(Enum.KeyCode.A) then move -= cam.CFrame.RightVector moving = true end
+        if UIS:IsKeyDown(Enum.KeyCode.D) then move += cam.CFrame.RightVector moving = true end
+        if UIS:IsKeyDown(Enum.KeyCode.Space) then move += Vector3.new(0,1,0) moving = true end
+        if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then move -= Vector3.new(0,1,0) moving = true end
 
         if moving then
             bodyVelocity.Velocity = move.Unit * flySpeed
@@ -203,60 +180,30 @@ end
 
 local function stopFly()
     flying = false
-    
-    if flyConnection then
-        flyConnection:Disconnect()
-        flyConnection = nil
-    end
-    
-    if bodyVelocity then
-        bodyVelocity:Destroy()
-        bodyVelocity = nil
-    end
+    if flyConn then flyConn:Disconnect() end
+    if bodyVelocity then bodyVelocity:Destroy() end
 end
 
--- Fly button
 FlyButton.MouseButton1Click:Connect(function()
+    local val = tonumber(SpeedBox.Text)
+    if val then flySpeed = val end
+
     if flying then
         stopFly()
         FlyButton.Text = "Fly OFF"
     else
-        local value = tonumber(SpeedBox.Text)
-        if value then
-            flySpeed = value
-        end
-        
         startFly()
         FlyButton.Text = "Fly ON"
     end
 end)
 
--- Drag
-local dragging = false
-local dragStart, startPos
-
-TopBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = Frame.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
+-- Tab switching
+SettingsTabBtn.MouseButton1Click:Connect(function()
+    SettingsFrame.Visible = true
+    FlyFrame.Visible = false
 end)
 
-UIS.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-        local delta = input.Position - dragStart
-        Frame.Position = UDim2.new(
-            startPos.X.Scale,
-            startPos.X.Offset + delta.X,
-            startPos.Y.Scale,
-            startPos.Y.Offset + delta.Y
-        )
-    end
+FlyTabBtn.MouseButton1Click:Connect(function()
+    SettingsFrame.Visible = false
+    FlyFrame.Visible = true
 end)
