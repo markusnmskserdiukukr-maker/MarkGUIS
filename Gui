@@ -4,7 +4,9 @@ local RunService = game:GetService("RunService")
 
 -- GUI
 local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+ScreenGui.ResetOnSpawn = false
 ScreenGui.Name = "MarkGui"
+ScreenGui.ResetOnSpawn = false -- ❗ щоб не пропадав
 
 -- Main Frame
 local Frame = Instance.new("Frame", ScreenGui)
@@ -105,9 +107,6 @@ local function createInput(parent, placeholder)
     box.TextSize = 14
 
     Instance.new("UICorner", box).CornerRadius = UDim.new(0,10)
-
-    local stroke = Instance.new("UIStroke", box)
-    stroke.Color = Color3.fromRGB(70,70,70)
 
     box.Parent = parent
     return box
@@ -219,60 +218,13 @@ FlyButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Tabs switching
+-- Tabs
 SettingsTabBtn.MouseButton1Click:Connect(function()
     SettingsFrame.Visible = true
     FlyFrame.Visible = false
-    updateHeight()
 end)
 
 FlyTabBtn.MouseButton1Click:Connect(function()
     SettingsFrame.Visible = false
     FlyFrame.Visible = true
-    updateHeight()
-end)
-
--- Auto resize
-function updateHeight()
-    local activeFrame = SettingsFrame.Visible and SettingsFrame or FlyFrame
-    local layout = activeFrame:FindFirstChildOfClass("UIListLayout")
-
-    if layout then
-        local contentHeight = layout.AbsoluteContentSize.Y
-        Frame.Size = UDim2.new(0, 320, 0, 90 + contentHeight + 20)
-    end
-end
-
-task.wait(0.1)
-updateHeight()
-
--- Drag
-local dragging = false
-local dragStart
-local startPos
-
-TopBar.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = Frame.Position
-    end
-end)
-
-UIS.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = false
-    end
-end)
-
-UIS.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-        local delta = input.Position - dragStart
-        Frame.Position = UDim2.new(
-            startPos.X.Scale,
-            startPos.X.Offset + delta.X,
-            startPos.Y.Scale,
-            startPos.Y.Offset + delta.Y
-        )
-    end
 end)
