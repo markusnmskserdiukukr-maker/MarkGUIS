@@ -8,8 +8,8 @@ ScreenGui.Name = "MarkGui"
 
 -- Main Frame
 local Frame = Instance.new("Frame", ScreenGui)
-Frame.Size = UDim2.new(0, 300, 0, 320)
-Frame.Position = UDim2.new(0.5, -150, 0.5, -160)
+Frame.Size = UDim2.new(0, 300, 0, 360)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -180)
 Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Frame.BorderSizePixel = 0
 
@@ -27,13 +27,6 @@ TopBar.BorderSizePixel = 0
 
 Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 14)
 
-local Grad = Instance.new("UIGradient", TopBar)
-Grad.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(40,40,40)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(15,15,15))
-}
-
--- Title
 local Title = Instance.new("TextLabel", TopBar)
 Title.Size = UDim2.new(1, -50, 1, 0)
 Title.Position = UDim2.new(0, 12, 0, 0)
@@ -85,7 +78,7 @@ end
 local WalkBox = createInput(55, "WalkSpeed")
 local JumpBox = createInput(95, "JumpHeight")
 local HpBox   = createInput(135, "Set Health")
-local SpeedBox = createInput(175, "Fly Speed") -- 👈 нове поле
+local SpeedBox = createInput(175, "Fly Speed")
 
 -- Button creator
 local function createButton(text, yPos)
@@ -116,9 +109,9 @@ end
 
 -- Buttons
 local ApplyButton = createButton("Apply", 220)
-local FlyButton = createButton("Fly OFF", 265) -- 👈 кнопка флая
+local FlyButton = createButton("Fly OFF", 265)
 
--- Logic Apply
+-- Apply logic
 ApplyButton.MouseButton1Click:Connect(function()
     local char = player.Character
     if not char then return end
@@ -145,7 +138,7 @@ ApplyButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- 🔥 FLY SYSTEM
+-- Fly system
 local flying = false
 local bodyVelocity
 local flySpeed = 50
@@ -171,28 +164,36 @@ local function startFly()
         local cam = workspace.CurrentCamera
         local move = Vector3.new(0,0,0)
 
+        local moving = false
+
         if UIS:IsKeyDown(Enum.KeyCode.W) then
             move += cam.CFrame.LookVector
+            moving = true
         end
         if UIS:IsKeyDown(Enum.KeyCode.S) then
             move -= cam.CFrame.LookVector
+            moving = true
         end
         if UIS:IsKeyDown(Enum.KeyCode.A) then
             move -= cam.CFrame.RightVector
+            moving = true
         end
         if UIS:IsKeyDown(Enum.KeyCode.D) then
             move += cam.CFrame.RightVector
+            moving = true
         end
 
-        -- 🔼 підйом / 🔽 спуск
         if UIS:IsKeyDown(Enum.KeyCode.Space) then
             move += Vector3.new(0,1,0)
-        end
-        if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then
-            move -= Vector3.new(0,1,0)
+            moving = true
         end
 
-        if move.Magnitude > 0 then
+        if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then
+            move -= Vector3.new(0,1,0)
+            moving = true
+        end
+
+        if moving then
             bodyVelocity.Velocity = move.Unit * flySpeed
         else
             bodyVelocity.Velocity = Vector3.new(0,0,0)
@@ -213,7 +214,8 @@ local function stopFly()
         bodyVelocity = nil
     end
 end
--- Fly button logic
+
+-- Fly button
 FlyButton.MouseButton1Click:Connect(function()
     if flying then
         stopFly()
@@ -223,6 +225,7 @@ FlyButton.MouseButton1Click:Connect(function()
         if value then
             flySpeed = value
         end
+        
         startFly()
         FlyButton.Text = "Fly ON"
     end
