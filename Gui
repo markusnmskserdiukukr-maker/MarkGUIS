@@ -88,8 +88,8 @@ FlyFrame.AnchorPoint = Vector2.new(0.5, 0)
 FlyFrame.BackgroundTransparency = 1
 FlyFrame.Visible = false
 
-SettingsFrame.Size = UDim2.new(1, 0, 1, 0)
-FlyFrame.Size = UDim2.new(1, 0, 1, 0)
+SettingsFrame.Size = UDim2.new(1, 0, 0, 0)
+FlyFrame.Size = UDim2.new(1, 0, 0, 0)
 
 -- Layouts
 local layout1 = Instance.new("UIListLayout", SettingsFrame)
@@ -157,6 +157,10 @@ end)
 
 -- Fly
 local SpeedBox = createInput(FlyFrame, "Fly Speed")
+WalkBox.FocusLost:Connect(updateHeight)
+JumpBox.FocusLost:Connect(updateHeight)
+HpBox.FocusLost:Connect(updateHeight)
+SpeedBox.FocusLost:Connect(updateHeight)
 
 local FlyButton = Instance.new("TextButton", FlyFrame)
 FlyButton.Size = UDim2.new(0,260,0,42)
