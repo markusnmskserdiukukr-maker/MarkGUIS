@@ -1,0 +1,175 @@
+local player = game.Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+
+-- GUI
+local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+ScreenGui.Name = "MarkGui"
+
+-- Main Frame
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0, 300, 0, 260)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -130)
+Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Frame.BorderSizePixel = 0
+
+Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 14)
+
+local Stroke = Instance.new("UIStroke", Frame)
+Stroke.Color = Color3.fromRGB(80, 80, 80)
+Stroke.Thickness = 1
+
+-- TopBar
+local TopBar = Instance.new("Frame", Frame)
+TopBar.Size = UDim2.new(1, 0, 0, 35)
+TopBar.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+TopBar.BorderSizePixel = 0
+
+Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 14)
+
+-- Gradient
+local Grad = Instance.new("UIGradient", TopBar)
+Grad.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(40,40,40)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(15,15,15))
+}
+
+-- Title
+local Title = Instance.new("TextLabel", TopBar)
+Title.Size = UDim2.new(1, -50, 1, 0)
+Title.Position = UDim2.new(0, 12, 0, 0)
+Title.Text = "MarkGui"
+Title.TextColor3 = Color3.fromRGB(255,255,255)
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 16
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Close button
+local CloseButton = Instance.new("TextButton", TopBar)
+CloseButton.Size = UDim2.new(0, 28, 0, 28)
+CloseButton.Position = UDim2.new(1, -32, 0.5, -14)
+CloseButton.Text = "X"
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 60, 60)
+CloseButton.TextColor3 = Color3.new(1,1,1)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 14
+
+Instance.new("UICorner", CloseButton).CornerRadius = UDim.new(0, 6)
+
+CloseButton.MouseButton1Click:Connect(function()
+    Frame.Visible = false
+end)
+
+-- Input creator
+local function createInput(yPos, placeholder)
+    local box = Instance.new("TextBox", Frame)
+    box.Size = UDim2.new(0, 260, 0, 38)
+    box.Position = UDim2.new(0.5, -130, 0, yPos)
+    box.PlaceholderText = placeholder
+    box.Text = ""
+    box.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    box.TextColor3 = Color3.fromRGB(255,255,255)
+    box.Font = Enum.Font.Gotham
+    box.TextSize = 14
+    box.ClearTextOnFocus = false
+
+    Instance.new("UICorner", box).CornerRadius = UDim.new(0, 8)
+
+    local stroke = Instance.new("UIStroke", box)
+    stroke.Color = Color3.fromRGB(70,70,70)
+
+    return box
+end
+
+-- Inputs
+local WalkBox = createInput(55, "WalkSpeed")
+local JumpBox = createInput(105, "JumpHeight")
+local HpBox   = createInput(155, "Set Health")
+
+-- Button creator
+local function createButton(text, yPos)
+    local btn = Instance.new("TextButton", Frame)
+    btn.Size = UDim2.new(0, 260, 0, 42)
+    btn.Position = UDim2.new(0.5, -130, 0, yPos)
+    btn.Text = text
+    btn.BackgroundColor3 = Color3.fromRGB(70, 130, 255)
+    btn.TextColor3 = Color3.fromRGB(255,255,255)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 15
+
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+
+    local stroke = Instance.new("UIStroke", btn)
+    stroke.Color = Color3.fromRGB(90,90,90)
+
+    -- Hover ефект
+    btn.MouseEnter:Connect(function()
+        btn.BackgroundColor3 = Color3.fromRGB(90, 150, 255)
+    end)
+
+    btn.MouseLeave:Connect(function()
+        btn.BackgroundColor3 = Color3.fromRGB(70, 130, 255)
+    end)
+
+    return btn
+end
+
+-- Apply button
+local ApplyButton = createButton("Apply", 205)
+
+-- Logic
+ApplyButton.MouseButton1Click:Connect(function()
+    local char = player.Character
+    if not char then return end
+    
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    if not humanoid then return end
+
+    local walk = tonumber(WalkBox.Text)
+    local jump = tonumber(JumpBox.Text)
+    local hp   = tonumber(HpBox.Text)
+
+    if walk then
+        humanoid.WalkSpeed = walk
+    end
+
+    if jump then
+        humanoid.UseJumpPower = false
+        humanoid.JumpHeight = jump
+    end
+
+    if hp then
+        humanoid.MaxHealth = hp
+        humanoid.Health = hp
+    end
+end)
+
+-- Drag
+local dragging = false
+local dragStart, startPos
+
+TopBar.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = Frame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        Frame.Position = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+    end
+end)
