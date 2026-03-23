@@ -1,5 +1,6 @@
 local player = game.Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 -- GUI
 local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
@@ -7,8 +8,8 @@ ScreenGui.Name = "MarkGui"
 
 -- Main Frame
 local Frame = Instance.new("Frame", ScreenGui)
-Frame.Size = UDim2.new(0, 300, 0, 260)
-Frame.Position = UDim2.new(0.5, -150, 0.5, -130)
+Frame.Size = UDim2.new(0, 300, 0, 320)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -160)
 Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Frame.BorderSizePixel = 0
 
@@ -26,7 +27,6 @@ TopBar.BorderSizePixel = 0
 
 Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 14)
 
--- Gradient
 local Grad = Instance.new("UIGradient", TopBar)
 Grad.Color = ColorSequence.new{
     ColorSequenceKeypoint.new(0, Color3.fromRGB(40,40,40)),
@@ -63,7 +63,7 @@ end)
 -- Input creator
 local function createInput(yPos, placeholder)
     local box = Instance.new("TextBox", Frame)
-    box.Size = UDim2.new(0, 260, 0, 38)
+    box.Size = UDim2.new(0, 260, 0, 32)
     box.Position = UDim2.new(0.5, -130, 0, yPos)
     box.PlaceholderText = placeholder
     box.Text = ""
@@ -83,13 +83,14 @@ end
 
 -- Inputs
 local WalkBox = createInput(55, "WalkSpeed")
-local JumpBox = createInput(105, "JumpHeight")
-local HpBox   = createInput(155, "Set Health")
+local JumpBox = createInput(95, "JumpHeight")
+local HpBox   = createInput(135, "Set Health")
+local SpeedBox = createInput(175, "Fly Speed") -- 👈 нове поле
 
 -- Button creator
 local function createButton(text, yPos)
     local btn = Instance.new("TextButton", Frame)
-    btn.Size = UDim2.new(0, 260, 0, 42)
+    btn.Size = UDim2.new(0, 260, 0, 38)
     btn.Position = UDim2.new(0.5, -130, 0, yPos)
     btn.Text = text
     btn.BackgroundColor3 = Color3.fromRGB(70, 130, 255)
@@ -102,7 +103,6 @@ local function createButton(text, yPos)
     local stroke = Instance.new("UIStroke", btn)
     stroke.Color = Color3.fromRGB(90,90,90)
 
-    -- Hover ефект
     btn.MouseEnter:Connect(function()
         btn.BackgroundColor3 = Color3.fromRGB(90, 150, 255)
     end)
@@ -114,10 +114,11 @@ local function createButton(text, yPos)
     return btn
 end
 
--- Apply button
-local ApplyButton = createButton("Apply", 205)
+-- Buttons
+local ApplyButton = createButton("Apply", 220)
+local FlyButton = createButton("Fly OFF", 265) -- 👈 кнопка флая
 
--- Logic
+-- Logic Apply
 ApplyButton.MouseButton1Click:Connect(function()
     local char = player.Character
     if not char then return end
@@ -141,6 +142,69 @@ ApplyButton.MouseButton1Click:Connect(function()
     if hp then
         humanoid.MaxHealth = hp
         humanoid.Health = hp
+    end
+end)
+
+-- 🔥 FLY SYSTEM
+local flying = false
+local bodyVelocity
+local flySpeed = 50
+
+local function startFly()
+    local char = player.Character
+    if not char then return end
+    
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+
+    bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.MaxForce = Vector3.new(999999,999999,999999)
+    bodyVelocity.Parent = hrp
+
+    flying = true
+
+    RunService.RenderStepped:Connect(function()
+        if flying and hrp then
+            local cam = workspace.CurrentCamera
+            local move = Vector3.new(0,0,0)
+
+            if UIS:IsKeyDown(Enum.KeyCode.W) then
+                move += cam.CFrame.LookVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.S) then
+                move -= cam.CFrame.LookVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.A) then
+                move -= cam.CFrame.RightVector
+            end
+            if UIS:IsKeyDown(Enum.KeyCode.D) then
+                move += cam.CFrame.RightVector
+            end
+
+            bodyVelocity.Velocity = move.Unit * flySpeed
+        end
+    end)
+end
+
+local function stopFly()
+    flying = false
+    if bodyVelocity then
+        bodyVelocity:Destroy()
+    end
+end
+
+-- Fly button logic
+FlyButton.MouseButton1Click:Connect(function()
+    if flying then
+        stopFly()
+        FlyButton.Text = "Fly OFF"
+    else
+        local value = tonumber(SpeedBox.Text)
+        if value then
+            flySpeed = value
+        end
+        startFly()
+        FlyButton.Text = "Fly ON"
     end
 end)
 
