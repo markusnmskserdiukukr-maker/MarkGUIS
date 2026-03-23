@@ -5,6 +5,7 @@ local RunService = game:GetService("RunService")
 -- GUI
 local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 ScreenGui.Name = "MarkGui"
+ScreenGui.ResetOnSpawn = false -- ВАЖЛИВО
 
 -- Main Frame
 local Frame = Instance.new("Frame", ScreenGui)
