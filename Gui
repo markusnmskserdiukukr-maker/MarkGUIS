@@ -18,7 +18,6 @@ Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 14)
 local TopBar = Instance.new("Frame", Frame)
 TopBar.Size = UDim2.new(1, 0, 0, 35)
 TopBar.BackgroundColor3 = Color3.fromRGB(18,18,18)
-
 Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 14)
 
 local Title = Instance.new("TextLabel", TopBar)
@@ -31,7 +30,7 @@ Title.Font = Enum.Font.GothamBold
 Title.TextSize = 16
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- Close
+-- Close button
 local CloseButton = Instance.new("TextButton", TopBar)
 CloseButton.Size = UDim2.new(0, 28, 0, 28)
 CloseButton.Position = UDim2.new(1, -32, 0.5, -14)
@@ -227,6 +226,8 @@ FlyTabBtn.MouseButton1Click:Connect(function()
     SettingsFrame.Visible = false
     FlyFrame.Visible = true
 end)
+
+-- Drag system
 local dragging = false
 local dragStart
 local startPos
