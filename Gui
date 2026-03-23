@@ -21,7 +21,6 @@ TopBar.BackgroundColor3 = Color3.fromRGB(18,18,18)
 
 Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 14)
 
--- Title
 local Title = Instance.new("TextLabel", TopBar)
 Title.Size = UDim2.new(1, -50, 1, 0)
 Title.Position = UDim2.new(0, 10, 0, 0)
@@ -39,76 +38,96 @@ CloseButton.Position = UDim2.new(1, -32, 0.5, -14)
 CloseButton.Text = "X"
 CloseButton.BackgroundColor3 = Color3.fromRGB(200,60,60)
 CloseButton.TextColor3 = Color3.new(1,1,1)
-
 Instance.new("UICorner", CloseButton).CornerRadius = UDim.new(0,6)
 
 CloseButton.MouseButton1Click:Connect(function()
     Frame.Visible = false
 end)
 
--- Tabs buttons
+-- Tabs
 local TabsFrame = Instance.new("Frame", Frame)
-TabsFrame.Size = UDim2.new(1, 0, 0, 40)
-TabsFrame.Position = UDim2.new(0,0,0,35)
+TabsFrame.Size = UDim2.new(1, -20, 0, 40)
+TabsFrame.Position = UDim2.new(0,10,0,45)
 TabsFrame.BackgroundTransparency = 1
 
-local function createTabButton(text, x)
+local function createTab(text, x)
     local btn = Instance.new("TextButton", TabsFrame)
     btn.Size = UDim2.new(0.5, -5, 1, 0)
     btn.Position = UDim2.new(x, 0, 0, 0)
     btn.Text = text
-    btn.BackgroundColor3 = Color3.fromRGB(60,60,60)
+    btn.BackgroundColor3 = Color3.fromRGB(50,50,50)
     btn.TextColor3 = Color3.new(1,1,1)
     btn.Font = Enum.Font.GothamBold
     btn.TextSize = 14
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0,8)
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0,10)
     return btn
 end
 
-local SettingsTabBtn = createTabButton("Settings", 0)
-local FlyTabBtn = createTabButton("Fly", 0.5)
+local SettingsTabBtn = createTab("Settings", 0)
+local FlyTabBtn = createTab("Fly", 0.5)
 
--- Content frames
+-- Frames
 local SettingsFrame = Instance.new("Frame", Frame)
-SettingsFrame.Size = UDim2.new(1,0,1,-80)
-SettingsFrame.Position = UDim2.new(0,0,0,75)
+SettingsFrame.Size = UDim2.new(1,0,1,-90)
+SettingsFrame.Position = UDim2.new(0,0,0,90)
 SettingsFrame.BackgroundTransparency = 1
 
 local FlyFrame = Instance.new("Frame", Frame)
-FlyFrame.Size = UDim2.new(1,0,1,-80)
-FlyFrame.Position = UDim2.new(0,0,0,75)
+FlyFrame.Size = UDim2.new(1,0,1,-90)
+FlyFrame.Position = UDim2.new(0,0,0,90)
 FlyFrame.BackgroundTransparency = 1
 FlyFrame.Visible = false
 
+-- Layouts
+local layout1 = Instance.new("UIListLayout", SettingsFrame)
+layout1.Padding = UDim.new(0,10)
+layout1.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+local layout2 = Instance.new("UIListLayout", FlyFrame)
+layout2.Padding = UDim.new(0,10)
+layout2.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
 -- Input creator
-local function createInput(parent, y, placeholder)
-    local box = Instance.new("TextBox", parent)
-    box.Size = UDim2.new(0, 260, 0, 32)
-    box.Position = UDim2.new(0.5, -130, 0, y)
-    box.PlaceholderText = placeholder
-    box.BackgroundColor3 = Color3.fromRGB(40,40,40)
+local function createInput(parent, placeholder)
+    local box = Instance.new("TextBox")
+    box.Size = UDim2.new(0, 260, 0, 38)
+    box.BackgroundColor3 = Color3.fromRGB(45,45,45)
     box.TextColor3 = Color3.new(1,1,1)
+    box.PlaceholderColor3 = Color3.fromRGB(170,170,170)
+    box.PlaceholderText = placeholder
+    box.Text = ""
     box.ClearTextOnFocus = false
-    Instance.new("UICorner", box).CornerRadius = UDim.new(0,8)
+    box.Font = Enum.Font.Gotham
+    box.TextSize = 14
+
+    Instance.new("UICorner", box).CornerRadius = UDim.new(0,10)
+
+    local stroke = Instance.new("UIStroke", box)
+    stroke.Color = Color3.fromRGB(70,70,70)
+
+    box.Parent = parent
     return box
 end
 
--- SETTINGS TAB
-local WalkBox = createInput(SettingsFrame, 10, "WalkSpeed")
-local JumpBox = createInput(SettingsFrame, 60, "JumpHeight")
-local HpBox   = createInput(SettingsFrame, 110, "Health")
+-- Settings inputs
+local WalkBox = createInput(SettingsFrame, "WalkSpeed")
+local JumpBox = createInput(SettingsFrame, "JumpHeight")
+local HpBox   = createInput(SettingsFrame, "Health")
 
+-- Apply button
 local ApplyBtn = Instance.new("TextButton", SettingsFrame)
-ApplyBtn.Size = UDim2.new(0,260,0,40)
-ApplyBtn.Position = UDim2.new(0.5,-130,0,160)
+ApplyBtn.Size = UDim2.new(0,260,0,42)
 ApplyBtn.Text = "Apply"
 ApplyBtn.BackgroundColor3 = Color3.fromRGB(70,130,255)
 ApplyBtn.TextColor3 = Color3.new(1,1,1)
-Instance.new("UICorner", ApplyBtn)
+ApplyBtn.Font = Enum.Font.GothamBold
+ApplyBtn.TextSize = 15
+Instance.new("UICorner", ApplyBtn).CornerRadius = UDim.new(0,12)
 
 ApplyBtn.MouseButton1Click:Connect(function()
     local char = player.Character
     if not char then return end
+
     local hum = char:FindFirstChildOfClass("Humanoid")
     if not hum then return end
 
@@ -127,16 +146,17 @@ ApplyBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- FLY TAB
-local SpeedBox = createInput(FlyFrame, 10, "Fly Speed")
+-- Fly inputs
+local SpeedBox = createInput(FlyFrame, "Fly Speed")
 
 local FlyButton = Instance.new("TextButton", FlyFrame)
-FlyButton.Size = UDim2.new(0,260,0,40)
-FlyButton.Position = UDim2.new(0.5,-130,0,60)
+FlyButton.Size = UDim2.new(0,260,0,42)
 FlyButton.Text = "Fly OFF"
 FlyButton.BackgroundColor3 = Color3.fromRGB(70,130,255)
 FlyButton.TextColor3 = Color3.new(1,1,1)
-Instance.new("UICorner", FlyButton)
+FlyButton.Font = Enum.Font.GothamBold
+FlyButton.TextSize = 15
+Instance.new("UICorner", FlyButton).CornerRadius = UDim.new(0,12)
 
 -- Fly logic
 local flying = false
@@ -197,7 +217,7 @@ FlyButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Tab switching
+-- Tabs switching
 SettingsTabBtn.MouseButton1Click:Connect(function()
     SettingsFrame.Visible = true
     FlyFrame.Visible = false
