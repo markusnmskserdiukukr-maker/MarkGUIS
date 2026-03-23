@@ -12,6 +12,7 @@ Frame.Size = UDim2.new(0, 320, 0, 300)
 Frame.Position = UDim2.new(0.5, -160, 0.5, -150)
 Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Frame.BorderSizePixel = 0
+Frame.AutomaticSize = Enum.AutomaticSize.Y
 Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 14)
 
 -- TopBar
@@ -68,14 +69,19 @@ local FlyTabBtn = createTab("Fly", 0.5)
 
 -- Frames
 local SettingsFrame = Instance.new("Frame", Frame)
-SettingsFrame.Position = UDim2.new(0,0,0,90)
+SettingsFrame.Position = UDim2.new(0.5, 0, 0, 90)
+SettingsFrame.AnchorPoint = Vector2.new(0.5, 0)
 SettingsFrame.BackgroundTransparency = 1
 SettingsFrame.Visible = true
 
 local FlyFrame = Instance.new("Frame", Frame)
-FlyFrame.Position = UDim2.new(0,0,0,90)
+FlyFrame.Position = UDim2.new(0.5, 0, 0, 90)
+FlyFrame.AnchorPoint = Vector2.new(0.5, 0)
 FlyFrame.BackgroundTransparency = 1
 FlyFrame.Visible = false
+
+SettingsFrame.Size = UDim2.new(1, 0, 0, 0)
+FlyFrame.Size = UDim2.new(1, 0, 0, 0)
 
 -- Layouts
 local layout1 = Instance.new("UIListLayout", SettingsFrame)
@@ -107,12 +113,12 @@ local function createInput(parent, placeholder)
     return box
 end
 
--- Settings inputs
+-- Inputs
 local WalkBox = createInput(SettingsFrame, "WalkSpeed")
 local JumpBox = createInput(SettingsFrame, "JumpHeight")
 local HpBox   = createInput(SettingsFrame, "Health")
 
--- Apply button
+-- Apply
 local ApplyBtn = Instance.new("TextButton", SettingsFrame)
 ApplyBtn.Size = UDim2.new(0,260,0,42)
 ApplyBtn.Text = "Apply"
@@ -144,7 +150,7 @@ ApplyBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Fly inputs
+-- Fly
 local SpeedBox = createInput(FlyFrame, "Fly Speed")
 
 local FlyButton = Instance.new("TextButton", FlyFrame)
@@ -156,7 +162,6 @@ FlyButton.Font = Enum.Font.GothamBold
 FlyButton.TextSize = 15
 Instance.new("UICorner", FlyButton).CornerRadius = UDim.new(0,12)
 
--- Fly logic
 local flying = false
 local bodyVelocity
 local flySpeed = 50
@@ -214,7 +219,7 @@ FlyButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Tabs
+-- Tabs switching
 SettingsTabBtn.MouseButton1Click:Connect(function()
     SettingsFrame.Visible = true
     FlyFrame.Visible = false
@@ -227,15 +232,14 @@ FlyTabBtn.MouseButton1Click:Connect(function()
     updateHeight()
 end)
 
--- Auto height fix
+-- Auto resize
 function updateHeight()
     local activeFrame = SettingsFrame.Visible and SettingsFrame or FlyFrame
     local layout = activeFrame:FindFirstChildOfClass("UIListLayout")
 
     if layout then
         local contentHeight = layout.AbsoluteContentSize.Y
-        local totalHeight = 90 + contentHeight + 20
-        Frame.Size = UDim2.new(0, 320, 0, totalHeight)
+        Frame.Size = UDim2.new(0, 320, 0, 90 + contentHeight + 20)
     end
 end
 
