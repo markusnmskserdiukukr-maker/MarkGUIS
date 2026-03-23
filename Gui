@@ -11,6 +11,8 @@ ScreenGui.ResetOnSpawn = false -- ❗ щоб не пропадав
 -- Main Frame
 local Frame = Instance.new("Frame", ScreenGui)
 Frame.Size = UDim2.new(0, 320, 0, 300)
+Frame.Active = true
+Frame.ZIndex = 5
 Frame.Position = UDim2.new(0.5, -160, 0.5, -150)
 Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Frame.BorderSizePixel = 0
@@ -20,6 +22,9 @@ Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 14)
 -- TopBar
 local TopBar = Instance.new("Frame", Frame)
 TopBar.Size = UDim2.new(1, 0, 0, 35)
+TopBar.Active = true
+TopBar.ZIndex = 10
+TopBar.Selectable = true
 TopBar.BackgroundColor3 = Color3.fromRGB(18,18,18)
 TopBar.Active = true
 Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 14)
