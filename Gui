@@ -5,6 +5,12 @@ local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
+-- ❗ Видаляємо старий GUI (щоб не дублювався)
+local oldGui = playerGui:FindFirstChild("MarkGui")
+if oldGui then
+    oldGui:Destroy()
+end
+
 -- GUI
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "MarkGui"
@@ -12,10 +18,12 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = playerGui
 
 -- Main Frame
-local Frame = Instance.new("Frame", ScreenGui)
+local Frame = Instance.new("Frame")
+Frame.Parent = ScreenGui
 Frame.Size = UDim2.new(0, 320, 0, 300)
-Frame.AnchorPoint = Vector2.new(0.5, 0.5)
 Frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+
 Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Frame.BorderSizePixel = 0
 Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 14)
@@ -91,7 +99,7 @@ layout1.Padding = UDim.new(0,6)
 local layout2 = Instance.new("UIListLayout", FlyFrame)
 layout2.Padding = UDim.new(0,6)
 
--- Input creator
+-- Input
 local function createInput(parent, placeholder)
     local box = Instance.new("TextBox")
     box.Size = UDim2.new(0, 260, 0, 38)
