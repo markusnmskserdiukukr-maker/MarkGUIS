@@ -16,7 +16,6 @@ Frame.ZIndex = 5
 Frame.Position = UDim2.new(0.5, -160, 0.5, -150)
 Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Frame.BorderSizePixel = 0
-Frame.AutomaticSize = Enum.AutomaticSize.Y
 Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 14)
 
 -- TopBar
@@ -99,6 +98,15 @@ layout1.HorizontalAlignment = Enum.HorizontalAlignment.Center
 local layout2 = Instance.new("UIListLayout", FlyFrame)
 layout2.Padding = UDim.new(0,6)
 layout2.HorizontalAlignment = Enum.HorizontalAlignment.Center
+function updateHeight()
+    local activeFrame = SettingsFrame.Visible and SettingsFrame or FlyFrame
+    local layout = activeFrame:FindFirstChildOfClass("UIListLayout")
+
+    if layout then
+        local contentHeight = layout.AbsoluteContentSize.Y
+        Frame.Size = UDim2.new(0, 320, 0, 90 + contentHeight + 20)
+    end
+end
 
 -- Input creator
 local function createInput(parent, placeholder)
@@ -122,6 +130,9 @@ end
 local WalkBox = createInput(SettingsFrame, "WalkSpeed")
 local JumpBox = createInput(SettingsFrame, "JumpHeight")
 local HpBox   = createInput(SettingsFrame, "Health")
+WalkBox.FocusLost:Connect(updateHeight)
+JumpBox.FocusLost:Connect(updateHeight)
+HpBox.FocusLost:Connect(updateHeight)
 
 -- Apply
 local ApplyBtn = Instance.new("TextButton", SettingsFrame)
@@ -158,9 +169,6 @@ end)
 -- Fly
 local SpeedBox = createInput(FlyFrame, "Fly Speed")
 WalkBox.FocusLost:Connect(updateHeight)
-JumpBox.FocusLost:Connect(updateHeight)
-HpBox.FocusLost:Connect(updateHeight)
-SpeedBox.FocusLost:Connect(updateHeight)
 
 local FlyButton = Instance.new("TextButton", FlyFrame)
 FlyButton.Size = UDim2.new(0,260,0,42)
