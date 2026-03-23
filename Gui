@@ -228,6 +228,8 @@ FlyTabBtn.MouseButton1Click:Connect(function()
 end)
 
 -- Drag system
+local UIS = game:GetService("UserInputService")
+
 local dragging = false
 local dragStart
 local startPos
@@ -237,18 +239,19 @@ TopBar.InputBegan:Connect(function(input)
         dragging = true
         dragStart = input.Position
         startPos = Frame.Position
+    end
+end)
 
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
+UIS.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
     end
 end)
 
 UIS.InputChanged:Connect(function(input)
     if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
         local delta = input.Position - dragStart
+
         Frame.Position = UDim2.new(
             startPos.X.Scale,
             startPos.X.Offset + delta.X,
