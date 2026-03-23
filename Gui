@@ -12,8 +12,6 @@ Frame.Size = UDim2.new(0, 320, 0, 300)
 Frame.Position = UDim2.new(0.5, -160, 0.5, -150)
 Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Frame.BorderSizePixel = 0
-Frame.AutomaticSize = Enum.AutomaticSize.Y
-
 Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 14)
 
 -- TopBar
@@ -70,17 +68,14 @@ local FlyTabBtn = createTab("Fly", 0.5)
 
 -- Frames
 local SettingsFrame = Instance.new("Frame", Frame)
-SettingsFrame.Size = UDim2.new(1,0,0,0)
 SettingsFrame.Position = UDim2.new(0,0,0,90)
 SettingsFrame.BackgroundTransparency = 1
-SettingsFrame.AutomaticSize = Enum.AutomaticSize.Y
+SettingsFrame.Visible = true
 
 local FlyFrame = Instance.new("Frame", Frame)
-FlyFrame.Size = UDim2.new(1,0,0,0)
 FlyFrame.Position = UDim2.new(0,0,0,90)
 FlyFrame.BackgroundTransparency = 1
 FlyFrame.Visible = false
-FlyFrame.AutomaticSize = Enum.AutomaticSize.Y
 
 -- Layouts
 local layout1 = Instance.new("UIListLayout", SettingsFrame)
@@ -117,7 +112,7 @@ local WalkBox = createInput(SettingsFrame, "WalkSpeed")
 local JumpBox = createInput(SettingsFrame, "JumpHeight")
 local HpBox   = createInput(SettingsFrame, "Health")
 
--- Apply
+-- Apply button
 local ApplyBtn = Instance.new("TextButton", SettingsFrame)
 ApplyBtn.Size = UDim2.new(0,260,0,42)
 ApplyBtn.Text = "Apply"
@@ -219,16 +214,33 @@ FlyButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Tabs switching
+-- Tabs
 SettingsTabBtn.MouseButton1Click:Connect(function()
     SettingsFrame.Visible = true
     FlyFrame.Visible = false
+    updateHeight()
 end)
 
 FlyTabBtn.MouseButton1Click:Connect(function()
     SettingsFrame.Visible = false
     FlyFrame.Visible = true
+    updateHeight()
 end)
+
+-- Auto height fix
+function updateHeight()
+    local activeFrame = SettingsFrame.Visible and SettingsFrame or FlyFrame
+    local layout = activeFrame:FindFirstChildOfClass("UIListLayout")
+
+    if layout then
+        local contentHeight = layout.AbsoluteContentSize.Y
+        local totalHeight = 90 + contentHeight + 20
+        Frame.Size = UDim2.new(0, 320, 0, totalHeight)
+    end
+end
+
+task.wait(0.1)
+updateHeight()
 
 -- Drag
 local dragging = false
