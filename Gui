@@ -2,30 +2,17 @@ local player = game.Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
-local playerGui = player:WaitForChild("PlayerGui")
-
--- ❗ remove old GUI (prevents duplication)
-local oldGui = playerGui:FindFirstChild("MarkGui")
-if oldGui then
-    oldGui:Destroy()
-end
-
 -- GUI
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Parent = playerGui
+local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 ScreenGui.Name = "MarkGui"
-ScreenGui.ResetOnSpawn = false
 
 -- Main Frame
 local Frame = Instance.new("Frame", ScreenGui)
 Frame.Size = UDim2.new(0, 320, 0, 300)
-
--- ❗ fix center
-Frame.AnchorPoint = Vector2.new(0.5, 0.5)
-Frame.Position = UDim2.new(0.5, 0, 0.5, 0)
-
+Frame.Position = UDim2.new(0.5, -160, 0.5, -150)
 Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Frame.BorderSizePixel = 0
+Frame.AutomaticSize = Enum.AutomaticSize.Y
 Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 14)
 
 -- TopBar
@@ -93,11 +80,17 @@ FlyFrame.AnchorPoint = Vector2.new(0.5, 0)
 FlyFrame.BackgroundTransparency = 1
 FlyFrame.Visible = false
 
+SettingsFrame.Size = UDim2.new(1, 0, 0, 0)
+FlyFrame.Size = UDim2.new(1, 0, 0, 0)
+
+-- Layouts
 local layout1 = Instance.new("UIListLayout", SettingsFrame)
 layout1.Padding = UDim.new(0,6)
+layout1.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 local layout2 = Instance.new("UIListLayout", FlyFrame)
 layout2.Padding = UDim.new(0,6)
+layout2.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 -- Input creator
 local function createInput(parent, placeholder)
@@ -113,15 +106,19 @@ local function createInput(parent, placeholder)
 
     Instance.new("UICorner", box).CornerRadius = UDim.new(0,10)
 
+    local stroke = Instance.new("UIStroke", box)
+    stroke.Color = Color3.fromRGB(70,70,70)
+
     box.Parent = parent
     return box
 end
 
--- Settings
+-- Inputs
 local WalkBox = createInput(SettingsFrame, "WalkSpeed")
 local JumpBox = createInput(SettingsFrame, "JumpHeight")
 local HpBox   = createInput(SettingsFrame, "Health")
 
+-- Apply
 local ApplyBtn = Instance.new("TextButton", SettingsFrame)
 ApplyBtn.Size = UDim2.new(0,260,0,42)
 ApplyBtn.Text = "Apply"
@@ -222,16 +219,32 @@ FlyButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Tabs
+-- Tabs switching
 SettingsTabBtn.MouseButton1Click:Connect(function()
     SettingsFrame.Visible = true
     FlyFrame.Visible = false
+    updateHeight()
 end)
 
 FlyTabBtn.MouseButton1Click:Connect(function()
     SettingsFrame.Visible = false
     FlyFrame.Visible = true
+    updateHeight()
 end)
+
+-- Auto resize
+function updateHeight()
+    local activeFrame = SettingsFrame.Visible and SettingsFrame or FlyFrame
+    local layout = activeFrame:FindFirstChildOfClass("UIListLayout")
+
+    if layout then
+        local contentHeight = layout.AbsoluteContentSize.Y
+        Frame.Size = UDim2.new(0, 320, 0, 90 + contentHeight + 20)
+    end
+end
+
+task.wait(0.1)
+updateHeight()
 
 -- Drag
 local dragging = false
