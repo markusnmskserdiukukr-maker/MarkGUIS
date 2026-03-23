@@ -8,16 +8,19 @@ ScreenGui.Name = "MarkGui"
 
 -- Main Frame
 local Frame = Instance.new("Frame", ScreenGui)
-Frame.Size = UDim2.new(0, 320, 0, 380)
-Frame.Position = UDim2.new(0.5, -160, 0.5, -190)
+Frame.Size = UDim2.new(0, 320, 0, 300)
+Frame.Position = UDim2.new(0.5, -160, 0.5, -150)
 Frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 Frame.BorderSizePixel = 0
+Frame.AutomaticSize = Enum.AutomaticSize.Y
+
 Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 14)
 
 -- TopBar
 local TopBar = Instance.new("Frame", Frame)
 TopBar.Size = UDim2.new(1, 0, 0, 35)
 TopBar.BackgroundColor3 = Color3.fromRGB(18,18,18)
+TopBar.Active = true
 Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 14)
 
 local Title = Instance.new("TextLabel", TopBar)
@@ -30,7 +33,7 @@ Title.Font = Enum.Font.GothamBold
 Title.TextSize = 16
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
--- Close button
+-- Close
 local CloseButton = Instance.new("TextButton", TopBar)
 CloseButton.Size = UDim2.new(0, 28, 0, 28)
 CloseButton.Position = UDim2.new(1, -32, 0.5, -14)
@@ -67,23 +70,25 @@ local FlyTabBtn = createTab("Fly", 0.5)
 
 -- Frames
 local SettingsFrame = Instance.new("Frame", Frame)
-SettingsFrame.Size = UDim2.new(1,0,1,-90)
+SettingsFrame.Size = UDim2.new(1,0,0,0)
 SettingsFrame.Position = UDim2.new(0,0,0,90)
 SettingsFrame.BackgroundTransparency = 1
+SettingsFrame.AutomaticSize = Enum.AutomaticSize.Y
 
 local FlyFrame = Instance.new("Frame", Frame)
-FlyFrame.Size = UDim2.new(1,0,1,-90)
+FlyFrame.Size = UDim2.new(1,0,0,0)
 FlyFrame.Position = UDim2.new(0,0,0,90)
 FlyFrame.BackgroundTransparency = 1
 FlyFrame.Visible = false
+FlyFrame.AutomaticSize = Enum.AutomaticSize.Y
 
 -- Layouts
 local layout1 = Instance.new("UIListLayout", SettingsFrame)
-layout1.Padding = UDim.new(0,10)
+layout1.Padding = UDim.new(0,6)
 layout1.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 local layout2 = Instance.new("UIListLayout", FlyFrame)
-layout2.Padding = UDim.new(0,10)
+layout2.Padding = UDim.new(0,6)
 layout2.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 -- Input creator
@@ -92,7 +97,6 @@ local function createInput(parent, placeholder)
     box.Size = UDim2.new(0, 260, 0, 38)
     box.BackgroundColor3 = Color3.fromRGB(45,45,45)
     box.TextColor3 = Color3.new(1,1,1)
-    box.PlaceholderColor3 = Color3.fromRGB(170,170,170)
     box.PlaceholderText = placeholder
     box.Text = ""
     box.ClearTextOnFocus = false
@@ -113,7 +117,7 @@ local WalkBox = createInput(SettingsFrame, "WalkSpeed")
 local JumpBox = createInput(SettingsFrame, "JumpHeight")
 local HpBox   = createInput(SettingsFrame, "Health")
 
--- Apply button
+-- Apply
 local ApplyBtn = Instance.new("TextButton", SettingsFrame)
 ApplyBtn.Size = UDim2.new(0,260,0,42)
 ApplyBtn.Text = "Apply"
@@ -179,20 +183,19 @@ local function startFly()
         if not flying then return end
 
         local cam = workspace.CurrentCamera
-        local move = Vector3.new(0,0,0)
-        local moving = false
+        local move = Vector3.zero
 
-        if UIS:IsKeyDown(Enum.KeyCode.W) then move += cam.CFrame.LookVector moving = true end
-        if UIS:IsKeyDown(Enum.KeyCode.S) then move -= cam.CFrame.LookVector moving = true end
-        if UIS:IsKeyDown(Enum.KeyCode.A) then move -= cam.CFrame.RightVector moving = true end
-        if UIS:IsKeyDown(Enum.KeyCode.D) then move += cam.CFrame.RightVector moving = true end
-        if UIS:IsKeyDown(Enum.KeyCode.Space) then move += Vector3.new(0,1,0) moving = true end
-        if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then move -= Vector3.new(0,1,0) moving = true end
+        if UIS:IsKeyDown(Enum.KeyCode.W) then move += cam.CFrame.LookVector end
+        if UIS:IsKeyDown(Enum.KeyCode.S) then move -= cam.CFrame.LookVector end
+        if UIS:IsKeyDown(Enum.KeyCode.A) then move -= cam.CFrame.RightVector end
+        if UIS:IsKeyDown(Enum.KeyCode.D) then move += cam.CFrame.RightVector end
+        if UIS:IsKeyDown(Enum.KeyCode.Space) then move += Vector3.new(0,1,0) end
+        if UIS:IsKeyDown(Enum.KeyCode.LeftControl) then move -= Vector3.new(0,1,0) end
 
-        if moving then
+        if move.Magnitude > 0 then
             bodyVelocity.Velocity = move.Unit * flySpeed
         else
-            bodyVelocity.Velocity = Vector3.new(0,0,0)
+            bodyVelocity.Velocity = Vector3.zero
         end
     end)
 end
@@ -227,9 +230,7 @@ FlyTabBtn.MouseButton1Click:Connect(function()
     FlyFrame.Visible = true
 end)
 
--- Drag system
-local UIS = game:GetService("UserInputService")
-
+-- Drag
 local dragging = false
 local dragStart
 local startPos
@@ -251,7 +252,6 @@ end)
 UIS.InputChanged:Connect(function(input)
     if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
         local delta = input.Position - dragStart
-
         Frame.Position = UDim2.new(
             startPos.X.Scale,
             startPos.X.Offset + delta.X,
