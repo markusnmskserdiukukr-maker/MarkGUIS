@@ -23,6 +23,7 @@ TopBar.Size = UDim2.new(1, 0, 0, 35)
 TopBar.BackgroundColor3 = Color3.fromRGB(18,18,18)
 TopBar.Active = true
 Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 14)
+TopBar.Selectable = true
 
 local Title = Instance.new("TextLabel", TopBar)
 Title.Size = UDim2.new(1, -50, 1, 0)
